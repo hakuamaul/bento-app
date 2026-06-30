@@ -1,9 +1,9 @@
-const express = require('express');
-const fetch = require('node-fetch');
+const express = require("express");
+const fetch = require("node-fetch");
 const app = express();
 app.use(express.json());
 
-app.get('/proxy', async (req, res) => {
+app.get("/proxy", async (req, res) => {
   const targetUrl = "https://script.google.com/macros/s/AKfycbwi7MOdmtz0iR6JlxVVDvr0lnxzyuQniDDpdVsOy4dhioqZSRbrmSg0avwC3qRPJU4/exec";
   const data = req.query.data;
   try {

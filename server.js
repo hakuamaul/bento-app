@@ -1,11 +1,15 @@
 const express = require('express');
 const fetch = require('node-fetch');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
+
+app.use((req, res, next) => {
+  console.log(`アクセス検知: ${req.method} ${req.url}`);
+  next();
+});
 
 app.use(express.json());
 
-// ブラウザから「/proxy」にアクセスが来たら、Googleに転送する
 app.get('/proxy', async (req, res) => {
   const targetUrl = "https://script.google.com/macros/s/AKfycbwi7MOdmtz0iR6JlxVVDvr0lnxzyuQniDDpdVsOy4dhioqZSRbrmSg0avwC3qRPJU4/exec";
   const data = req.query.data;

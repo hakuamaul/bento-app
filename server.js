@@ -21,13 +21,14 @@ app.get('/proxy', async (req, res) => {
   try {
     const response = await fetch(`${targetUrl}?data=${encodeURIComponent(data)}`);
     const result = await response.text();
-    res.send("Success: " + result);
+    // 余計な文字を削除し、純粋なデータだけを返すように修正しました
+    res.send(result);
   } catch (e) {
     console.error(e);
     res.status(500).send("Error: " + e.message);
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT} and listening on 0.0.0.0`);
 });

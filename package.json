@@ -17,8 +17,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "qr": "node scripts/generate_qr.mjs",
-    "preexport": "nativewind --build",
-    "export": "expo export"
+    "preexport": "npx nativewind --build",
+    "export": "npx expo export"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

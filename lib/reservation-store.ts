@@ -5,7 +5,7 @@ import { isBusinessDay, parseDateLocal, formatDateISO } from "./japanese-holiday
 const STORAGE_KEY = "bento_reservations";
 
 // スプレッドシート（GAS）のURL
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwi7MOdmtz0iR6JlxVVDvr0lnxzyuQniDDpdVsOy4dhioqZSRbrmSg0avwC3qRPJU4/exec";
+const GAS_URL = "https://bento-app-5tp8.onrender.com/proxy";
 
 /**
  * 予約データを読み込む（スプレッドシートから取得して同期する）

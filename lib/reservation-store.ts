@@ -1,4 +1,4 @@
-const GAS_URL = "https://bento-app-5tp8.onrender.com/proxy";
+const GAS_URL = "https://bento-app-5fp8.onrender.com/proxy";
 
 export async function loadReservations() {
   try {

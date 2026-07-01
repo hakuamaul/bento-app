@@ -125,7 +125,7 @@ export default function ReserveScreen() {
     await addReservation(reservation);
 
     try {
-      const gasUrl = "https://bento-app-5tp8.onrender.com/proxy";
+      const gasUrl = "https://bento-app-5fp8.onrender.com/proxy";
       const encodedData = encodeURIComponent(JSON.stringify(reservation));
       const finalUrl = `${gasUrl}?data=${encodedData}`;
 

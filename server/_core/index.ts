@@ -6,6 +6,7 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
+import fetch from "node-fetch"; // 事前にインストールした道具を使用します
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise((resolve) => {
@@ -30,7 +31,7 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
-  // Enable CORS for all routes - reflect the request origin to support credentials
+  // CORS設定：すべてのルートからのアクセスを許可
   app.use((req, res, next) => {
     const origin = req.headers.origin;
     if (origin) {
@@ -43,7 +44,6 @@ async function startServer() {
     );
     res.header("Access-Control-Allow-Credentials", "true");
 
-    // Handle preflight requests
     if (req.method === "OPTIONS") {
       res.sendStatus(200);
       return;
@@ -53,6 +53,42 @@ async function startServer() {
 
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+  // ✨ 【新設】Netlifyからのデータ要求をGoogleスプレッドシート（GAS）へ中継する窓口
+  app.all("/proxy", async (req, res) => {
+    try {
+      const gasUrl = "https://script.google.com/macros/s/AKfycbwi7MOdmtz0iR6JlxVVDvr0lnxzyuQniDDpdVsOy4dhioqZSRbrmSg0avwC3qRPJU4/exec";
+      
+      // 画面から送られてきたクエリパラメータ（?action=xxxなど）をGASのURLに結合
+      const url = new URL(gasUrl);
+      Object.keys(req.query).forEach((key) => {
+        url.searchParams.append(key, req.query[key] as string);
+      });
+
+      const options: any = {
+        method: req.method,
+        headers: {
+          "Accept": "application/json",
+        },
+      };
+
+      // POSTなどの場合は、送られてきた中身（予約内容など）もそのままGASへ引き渡す
+      if (req.method !== "GET" && req.method !== "HEAD") {
+        options.headers["Content-Type"] = "application/json";
+        options.body = JSON.stringify(req.body);
+      }
+
+      // Googleのサーバーにデータをデータを取りに行く
+      const response = await fetch(url.toString(), options);
+      const data = await response.json();
+      
+      // 取ってきたデータをそのままNetlifyの画面に返却する
+      res.json(data);
+    } catch (error) {
+      console.error("Proxy error:", error);
+      res.status(500).json({ error: "Failed to fetch data from Google Sheets via Proxy" });
+    }
+  });
 
   registerOAuthRoutes(app);
 

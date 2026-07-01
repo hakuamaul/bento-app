@@ -125,14 +125,18 @@ export default function ReserveScreen() {
     await addReservation(reservation);
 
     try {
+      // 修正済みURL(5fp8)へPOST通信する方式に変更
       const gasUrl = "https://bento-app-5fp8.onrender.com/proxy";
-      const encodedData = encodeURIComponent(JSON.stringify(reservation));
-      const finalUrl = `${gasUrl}?data=${encodedData}`;
 
-      await fetch(finalUrl, {
-        method: "GET",
-        mode: "no-cors",
+      const response = await fetch(gasUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reservation),
       });
+
+      if (!response.ok) {
+        throw new Error("サーバーからの応答がありませんでした");
+      }
 
       Alert.alert("予約完了！", "予約が確定しました。", [
         { text: "OK", onPress: () => {
@@ -143,7 +147,7 @@ export default function ReserveScreen() {
       ]);
     } catch (sheetError) {
       console.error("送信エラー:", sheetError);
-      Alert.alert("通信エラー", "電波の良いところで再度お試しください。");
+      Alert.alert("通信エラー", "もう一度お試しください。");
     } finally {
       setSubmitting(false);
     }
